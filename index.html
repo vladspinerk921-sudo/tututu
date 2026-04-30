@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Анімація кульки по кривій</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f0f0; }
+        canvas { background: white; border: 1px solid #ccc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="800" height="400"></canvas>
+
+<script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let x = 0;
+    const radius = 15;
+    const amplitude = 100; // Висота хвилі
+    const frequency = 0.05; // Частота (густота хвиль)
+    const centerY = canvas.height / 2;
+    
+    let ballColor = getRandomColor();
+
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function draw() {
+        // Очищення екрану (можна закоментувати для ефекту шлейфу)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Малюємо траєкторію (сіра лінія)
+        ctx.beginPath();
+        ctx.strokeStyle = '#eee';
+        for (let i = 0; i < canvas.width; i++) {
+            let py = centerY + Math.sin(i * frequency) * amplitude;
+            ctx.lineTo(i, py);
+        }
+        ctx.stroke();
+
+        // Розрахунок поточної позиції Y за синусоїдою
+        const y = centerY + Math.sin(x * frequency) * amplitude;
+
+        // Малювання кульки
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = ballColor;
+        ctx.fill();
+        ctx.closePath();
+
+        // Рух кульки
+        x += 2;
+
+        // Перевірка: якщо кулька вийшла за межі екрану
+        if (x > canvas.width + radius) {
+            x = -radius; // Повертаємо на початок
+            ballColor = getRandomColor(); // Змінюємо колір при кожній новій появі
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+</script>
+</body>
+</html> 
